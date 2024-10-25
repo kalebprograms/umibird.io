@@ -63,6 +63,14 @@ window.onload = function() {
     requestAnimationFrame(update);
     setInterval(placePipes, 1500); //every 1.5 seconds
     document.addEventListener("keydown", moveBird);
+
+ // Listen for spacebar or arrow keys on keyboard
+    document.addEventListener("keydown", moveBird);
+
+    // Listen for touch events on mobile
+    document.addEventListener("touchstart", function(event) {
+        moveBird({ code: "Space" });
+    });
 }
 
 function update() {
