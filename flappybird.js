@@ -73,14 +73,6 @@ window.onload = function() {
  // Listen for spacebar or arrow keys on keyboard
     document.addEventListener("keydown", moveBird);
 
-
-
-
-     canvas.addEventListener("touchstart", (event) => {
-    event.preventDefault();
-    // Your tap interaction logic here
-         
-    // Listen for touch events on mobile
     document.addEventListener("touchstart", function(event) {
         moveBird({ code: "Space" });
     });
