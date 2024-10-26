@@ -1,10 +1,10 @@
 body {
     font-family:'Courier New', Courier, monospace;
-    text-align: left-center;
+    text-align: center;
     
 }
 
 #board {
     /* background-color: skyblue; */
-    background-image: url("./city.png.jpg");
+    background-image: url("./flappybirdbg.jpg");
 }
