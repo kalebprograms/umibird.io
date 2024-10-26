@@ -72,6 +72,7 @@ window.onload = function() {
     document.addEventListener("keydown", moveBird);
 
     document.addEventListener("touchstart", function(event) {
+        event.preventDefault(); 
         moveBird({ code: "Space" });
     });
 }
