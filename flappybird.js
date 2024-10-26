@@ -173,8 +173,9 @@ function moveBird(e) {
 }
 
 function detectCollision(a, b) {
-    return a.x < b.x + b.width &&   //a's top left corner doesn't reach b's top right corner
-           a.x + a.width > b.x &&   //a's top right corner passes b's top left corner
-           a.y < b.y + b.height &&  //a's top left corner doesn't reach b's bottom left corner
-           a.y + a.height > b.y;    //a's bottom left corner passes b's top left corner
+    const hitboxMargin = 5; // Adjust this value to fine-tune the hitbox
+    return (a.x + hitboxMargin) < (b.x + b.width) &&
+           (a.x + a.width - hitboxMargin) > b.x &&
+           (a.y + hitboxMargin) < (b.y + b.height) &&
+           (a.y + a.height - hitboxMargin) > b.y;
 }
