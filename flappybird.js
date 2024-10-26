@@ -61,9 +61,7 @@ window.onload = function() {
     bottomPipeImg.src = "./bottompipe.png";
     
     
-    canvas.addEventListener("touchstart", (event) => {
-    event.preventDefault();
-    // Your tap interaction logic here
+   
 
 
     requestAnimationFrame(update);
