@@ -7,4 +7,6 @@ body {
 #board {
     /* background-color: skyblue; */
     background-image: url("./city.png.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
 }
