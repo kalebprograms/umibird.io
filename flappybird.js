@@ -1,27 +1,26 @@
-
-//board
+// board setup
 let board;
 let boardWidth = 360;
 let boardHeight = 640;
 let context;
 
-//bird
-let birdWidth = 60; //width/height ratio = 408/228 = 17/12
+// bird setup
+let birdWidth = 60;
 let birdHeight = 60;
-let birdX = boardWidth/8;
-let birdY = boardHeight/2;
+let birdX = boardWidth / 8;
+let birdY = boardHeight / 2;
 let birdImg;
 
 let bird = {
-    x : birdX,
-    y : birdY,
-    width : birdWidth,
-    height : birdHeight
-}
+    x: birdX,
+    y: birdY,
+    width: birdWidth,
+    height: birdHeight
+};
 
-//pipes
+// pipe setup
 let pipeArray = [];
-let pipeWidth = 64; //width/height ratio = 384/3072 = 1/8
+let pipeWidth = 64;
 let pipeHeight = 512;
 let pipeX = boardWidth;
 let pipeY = 0;
@@ -29,79 +28,71 @@ let pipeY = 0;
 let topPipeImg;
 let bottomPipeImg;
 
-//physics
-let velocityX = -2; //pipes moving left speed
-let velocityY = 0; //bird jump speed
-let gravity = 0.4;
+// easier physics settings
+let velocityX = -1.1; // much slower pipe speed
+let velocityY = 0;
+let gravity = 0.07;   // much gentler falling
 
 let gameOver = false;
 let score = 0;
 
-window.onload = function() {
+window.onload = function () {
     board = document.getElementById("board");
     board.height = boardHeight;
     board.width = boardWidth;
-    context = board.getContext("2d"); //used for drawing on the board
+    context = board.getContext("2d");
 
-    //draw flappy bird
-    // context.fillStyle = "green";
-    // context.fillRect(bird.x, bird.y, bird.width, bird.height);
-
-    //load images
+    // load bird image
     birdImg = new Image();
     birdImg.src = "./umi.png.png";
-    birdImg.onload = function() {
+    birdImg.onload = function () {
         context.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
-    }
+    };
 
+    // load pipe images
     topPipeImg = new Image();
     topPipeImg.src = "./toppipe.png";
 
     bottomPipeImg = new Image();
     bottomPipeImg.src = "./bottompipe.png";
-    
-    
-   
-
 
     requestAnimationFrame(update);
-    setInterval(placePipes, 1500); //every 1.5 seconds
+    setInterval(placePipes, 1800); // more time between pipe sets
+
     document.addEventListener("keydown", moveBird);
 
- // Listen for spacebar or arrow keys on keyboard
-    document.addEventListener("keydown", moveBird);
-
-    document.addEventListener("touchstart", function(event) {
-        event.preventDefault(); 
+    document.addEventListener("touchstart", function (event) {
+        event.preventDefault();
         moveBird({ code: "Space" });
     });
-}
+};
 
 function update() {
     requestAnimationFrame(update);
+
     if (gameOver) {
         return;
     }
+
     context.clearRect(0, 0, board.width, board.height);
 
-    //bird
+    // bird movement
     velocityY += gravity;
-    // bird.y += velocityY;
-    bird.y = Math.max(bird.y + velocityY, 0); //apply gravity to current bird.y, limit the bird.y to top of the canvas
+    bird.y = Math.max(bird.y + velocityY, 0);
     context.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
 
     if (bird.y > board.height) {
         gameOver = true;
     }
 
-    //pipes
+    // move and draw pipes
     for (let i = 0; i < pipeArray.length; i++) {
         let pipe = pipeArray[i];
         pipe.x += velocityX;
         context.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
 
         if (!pipe.passed && bird.x > pipe.x + pipe.width) {
-            score += 0.5; //0.5 because there are 2 pipes! so 0.5*2 = 1, 1 for each set of pipes
+            score += 0.5;
             pipe.passed = true;
         }
 
@@ -110,14 +101,14 @@ function update() {
         }
     }
 
-    //clear pipes
+    // remove old pipes
     while (pipeArray.length > 0 && pipeArray[0].x < -pipeWidth) {
-        pipeArray.shift(); //removes first element from the array
+        pipeArray.shift();
     }
 
-    //score
+    // score display
     context.fillStyle = "white";
-    context.font="45px sans-serif";
+    context.font = "45px sans-serif";
     context.fillText(score, 5, 45);
 
     if (gameOver) {
@@ -130,41 +121,40 @@ function placePipes() {
         return;
     }
 
-    //(0-1) * pipeHeight/2.
-    // 0 -> -128 (pipeHeight/4)
-    // 1 -> -128 - 256 (pipeHeight/4 - pipeHeight/2) = -3/4 pipeHeight
-    let randomPipeY = pipeY - pipeHeight/4 - Math.random()*(pipeHeight/2);
-    let openingSpace = board.height/4;
+    let randomPipeY = pipeY - pipeHeight / 4 - Math.random() * (pipeHeight / 2);
+
+    // much bigger opening for easier gameplay
+    let openingSpace = board.height / 2.2;
 
     let topPipe = {
-        img : topPipeImg,
-        x : pipeX,
-        y : randomPipeY,
-        width : pipeWidth,
-        height : pipeHeight,
-        passed : false
-    }
+        img: topPipeImg,
+        x: pipeX,
+        y: randomPipeY,
+        width: pipeWidth,
+        height: pipeHeight,
+        passed: false
+    };
     pipeArray.push(topPipe);
 
     let bottomPipe = {
-        img : bottomPipeImg,
-        x : pipeX,
-        y : randomPipeY + pipeHeight + openingSpace,
-        width : pipeWidth,
-        height : pipeHeight,
-        passed : false
-    }
+        img: bottomPipeImg,
+        x: pipeX,
+        y: randomPipeY + pipeHeight + openingSpace,
+        width: pipeWidth,
+        height: pipeHeight,
+        passed: false
+    };
     pipeArray.push(bottomPipe);
 }
 
 function moveBird(e) {
     if (e.code == "Space" || e.code == "ArrowUp" || e.code == "KeyX") {
-        //jump
-        velocityY = -6;
+        // much softer jump
+        velocityY = -3.2;
 
-        //reset game
         if (gameOver) {
             bird.y = birdY;
+            velocityY = 0;
             pipeArray = [];
             score = 0;
             gameOver = false;
@@ -173,7 +163,8 @@ function moveBird(e) {
 }
 
 function detectCollision(a, b) {
-    const hitboxMargin = 5; // Adjust this value to fine-tune the hitbox
+    // smaller hitbox makes game more forgiving
+    const hitboxMargin = 12;
     return (a.x + hitboxMargin) < (b.x + b.width) &&
            (a.x + a.width - hitboxMargin) > b.x &&
            (a.y + hitboxMargin) < (b.y + b.height) &&
